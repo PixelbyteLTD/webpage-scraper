@@ -1,0 +1,5 @@
+[
+  {"url": "https://example.com/", "file": "example_com_index.html", "title": "", "fetch_time": "2026-10-11T10:00:00"},
+  {"url": "https://example.com/guides/setup", "file": "example_com_guides_setup.html", "title": "", "fetch_time": "2026-10-11T10:05:00"},
+  {"url": "https://example.com/guides/faq", "file": "example_com_guides_faq.html", "title": "", "fetch_time": "2026-10-11T10:10:00"}
+]
