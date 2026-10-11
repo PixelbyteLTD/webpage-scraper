@@ -4,6 +4,7 @@ import typer
 
 from sitescrape.check import do_check
 from sitescrape.cookies import do_import_cookies
+from sitescrape.crawler import do_crawl
 from sitescrape.login import do_login
 
 app = typer.Typer(
@@ -15,3 +16,4 @@ app = typer.Typer(
 app.command(name="login")(do_login)
 app.command(name="import-cookies")(do_import_cookies)
 app.command(name="check")(do_check)
+app.command(name="crawl")(do_crawl)
