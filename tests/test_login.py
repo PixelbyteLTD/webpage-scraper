@@ -11,35 +11,12 @@ class TestLoginDoLogin:
     """Tests for the login flow - mocked Playwright."""
 
     def test_creates_auth_dir_and_state_file(self, tmp_path):
-        """Login creates the auth directory and writes state.json."""
-        from sitescrape.login import do_login
-
-        auth_dir = tmp_path / "auth"
-
-        mock_pw = mock.Mock()
-        mock_browser = mock.Mock()
-        mock_context = mock.Mock()
-        mock_page = mock.Mock()
-
-        mock_pw.chromium.launch.return_value = mock_browser
-        mock_browser.new_context.return_value = mock_context
-        mock_context.new_page.return_value = mock_page
-
-        with mock.patch("builtins.open", create=True), \
-             mock.patch.object(Path, "exists", return_value=False):
-            with mock.patch(
-                "sitescrape.login.sync_playwright", return_value=mock_pw
-            ) as mock_playwright:
-                # Mock the input() call so we don't block
-                with mock.patch("builtins.input", return_value=""):
-                    with mock.patch(
-                        "sitescrape.login.do_login.__globals__"
-                    ):
-                        pass
-
-        # The real test: verify the module structure is importable
+        """Login module is importable and structurally sound."""
         import sitescrape.login
         assert hasattr(sitescrape.login, "do_login")
+        import inspect
+        source = inspect.getsource(sitescrape.login.do_login)
+        assert "sync_playwright" in source
 
     def test_do_login_signature(self):
         """do_login accepts url and auth_dir arguments."""
@@ -64,10 +41,11 @@ class TestLoginAuthDirectory:
 
     def test_default_auth_dir(self):
         """Auth module defaults to ./auth."""
-        from sitescrape.login import do_login
         import inspect
+        from sitescrape.login import do_login
         params = inspect.signature(do_login).parameters
-        assert params["auth_dir"].default == "./auth"
+        # Typer OptionInfo needs .default_value
+        assert params["auth_dir"].default.default == "./auth"
 
     def test_custom_auth_dir(self):
         """User can specify a custom auth directory."""

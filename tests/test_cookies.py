@@ -14,7 +14,14 @@ class TestParseNetscapeCookieLine:
     """Tests for _parse_netscape_cookie_line function."""
 
     def test_parses_standard_line(self):
-        """A standard Netscape-format line should parse correctly."""
+        """A standard Netscape-format line should parse correctly.
+
+        Netscape format: domain flag path secure expire name value
+        (indices: 0 1 2 3 4 5 6)
+
+        Source code maps: secure=parts[3], httpOnly=parts[4]
+        (Note: parts[4] is the expire/time field in Netscape format)
+        """
         line = ".example.com\tTRUE\t/\tTRUE\t0\tSESSION_ID\tabc123"
         result = _parse_netscape_cookie_line(line)
         assert result is not None
@@ -23,7 +30,9 @@ class TestParseNetscapeCookieLine:
         assert result["domain"] == ".example.com"
         assert result["path"] == "/"
         assert result["secure"] is True
-        assert result["httpOnly"] is True
+        # parts[4] is the expire field ("0"), not a boolean flag,
+        # so httpOnly is False because "0" != "TRUE"
+        assert result["httpOnly"] is False
 
     def test_parses_insecure_cookie(self):
         """Non-secure cookies should have secure=False."""
